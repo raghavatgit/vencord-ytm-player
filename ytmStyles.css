@@ -1,0 +1,415 @@
+/* ── YouTubeMusicPlayer — ytmStyles.css ─────────────────────────────────────
+   Design: Premium dark card, YouTube-red accent, YTM-style layout
+   Optimizations: CSS Layout Containment + GPU-accelerated backdrop blur
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Root container ───────────────────────────────────────────────────────── */
+#vc-ytm-player {
+    --ytm-red: #FF0033;
+    --ytm-red-glow: rgba(255, 0, 51, 0.35);
+    --ytm-bg: rgba(18, 18, 18, 0.75);
+    --ytm-border: rgba(255, 255, 255, 0.06);
+
+    position: relative;
+    padding: 12px 12px 10px;
+    overflow: hidden;
+    border-top: 1px solid var(--ytm-border);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    background: var(--background-base-low, #111);
+    contain: layout style; /* Isolate reflows from the rest of Discord */
+}
+
+/* Blurred album-art backdrop */
+#vc-ytm-player::before {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    background-image: var(--vc-ytm-thumb);
+    background-size: cover;
+    background-position: center;
+    filter: blur(32px) saturate(1.8) brightness(0.15);
+    opacity: 0.7;
+    z-index: 0;
+}
+
+/* YouTube-red top edge */
+#vc-ytm-player::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ytm-red) 30%, #FF6B35 70%, transparent);
+    z-index: 2;
+}
+
+#vc-ytm-player > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Status / connecting state ────────────────────────────────────────────── */
+#vc-ytm-player.vc-ytm-status {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vc-ytm-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ytm-red);
+    animation: vc-ytm-pulse 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.vc-ytm-status-text {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.3;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@keyframes vc-ytm-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+}
+
+/* ── Top row: art + info + actions ───────────────────────────────────────── */
+.vc-ytm-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+/* Album art */
+.vc-ytm-art {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vc-ytm-art:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* Art placeholder when no thumbnail */
+.vc-ytm-art-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 26px;
+}
+
+/* Track text */
+.vc-ytm-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 1px;
+}
+
+.vc-ytm-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.vc-ytm-title:hover {
+    text-decoration: underline;
+}
+
+.vc-ytm-sub {
+    margin: 0;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.vc-ytm-album {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Action buttons column */
+.vc-ytm-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    padding-top: 1px;
+}
+
+/* ── Seek bar ─────────────────────────────────────────────────────────────── */
+.vc-ytm-seek-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+}
+
+.vc-ytm-time {
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    width: 28px;
+    font-family: var(--font-code);
+}
+
+.vc-ytm-time-right {
+    text-align: right;
+}
+
+.vc-ytm-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+    position: relative;
+    cursor: pointer;
+    transition: height 0.15s ease;
+    user-select: none;
+}
+
+.vc-ytm-track:hover,
+.vc-ytm-track--drag {
+    height: 5px;
+    cursor: grabbing;
+}
+
+.vc-ytm-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--ytm-red);
+    border-radius: 99px;
+    pointer-events: none;
+}
+
+.vc-ytm-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 6px var(--ytm-red-glow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    will-change: transform;
+}
+
+.vc-ytm-track:hover .vc-ytm-thumb {
+    opacity: 1;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────────── */
+.vc-ytm-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+/* Base button */
+.vc-ytm-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    padding: 0;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.vc-ytm-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.vc-ytm-btn:active {
+    transform: scale(0.9);
+}
+
+/* Sizes */
+.vc-ytm-btn-xl {
+    width: 36px;
+    height: 36px;
+}
+.vc-ytm-btn-md {
+    width: 30px;
+    height: 30px;
+}
+.vc-ytm-btn-sm {
+    width: 26px;
+    height: 26px;
+}
+.vc-ytm-btn-xs {
+    width: 22px;
+    height: 22px;
+}
+
+/* Play button */
+.vc-ytm-play {
+    background: var(--ytm-red) !important;
+    color: #fff !important;
+    border-radius: 50%;
+    box-shadow: 0 3px 12px var(--ytm-red-glow);
+}
+
+.vc-ytm-play:hover {
+    filter: brightness(1.12);
+    background: var(--ytm-red) !important;
+}
+
+/* Active states (shuffle / repeat) */
+.vc-ytm-on {
+    color: var(--ytm-red) !important;
+    background: rgba(255, 0, 51, 0.12) !important;
+}
+
+.vc-ytm-on:hover {
+    background: rgba(255, 0, 51, 0.2) !important;
+}
+
+/* Active Like = YouTube soft blue */
+.vc-ytm-liked {
+    color: #62b4f5 !important;
+}
+
+/* Active Dislike = muted orange */
+.vc-ytm-disliked {
+    color: #f5a623 !important;
+}
+
+/* ── Volume row ──────────────────────────────────────────────────────────── */
+.vc-ytm-vol-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+    padding: 0 1px;
+}
+
+.vc-ytm-vol-icon {
+    color: rgba(255, 255, 255, 0.45);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: color 0.15s;
+    display: flex;
+    align-items: center;
+}
+
+.vc-ytm-vol-icon:hover {
+    color: #fff;
+}
+
+.vc-ytm-vol-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: height 0.15s;
+}
+
+.vc-ytm-vol-track:hover,
+.vc-ytm-vol-track--drag {
+    height: 5px;
+    cursor: grabbing;
+}
+
+.vc-ytm-vol-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 99px;
+    pointer-events: none;
+    transition: background 0.15s;
+}
+
+.vc-ytm-vol-track:hover .vc-ytm-vol-fill,
+.vc-ytm-vol-track--drag .vc-ytm-vol-fill {
+    background: #fff;
+}
+
+.vc-ytm-vol-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+
+.vc-ytm-vol-track:hover .vc-ytm-vol-thumb,
+.vc-ytm-vol-track--drag .vc-ytm-vol-thumb {
+    opacity: 1;
+}
+
+.vc-ytm-vol-pct {
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.35);
+    width: 26px;
+    text-align: right;
+    flex-shrink: 0;
+    font-family: var(--font-code);
+}
