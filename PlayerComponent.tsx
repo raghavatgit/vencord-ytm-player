@@ -284,7 +284,7 @@ export function Player() {
             <div id="vc-ytm-player" className="vc-ytm-status">
                 {dotted && <span className="vc-ytm-status-dot" />}
                 <span className="vc-ytm-status-text">
-                    {statusText || "YouTube Music — waiting for companion server…"}
+                    {statusText || "YouTube Music: waiting for companion server..."}
                 </span>
             </div>
         );
