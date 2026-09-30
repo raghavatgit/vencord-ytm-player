@@ -1,0 +1,24 @@
+/* feat(styles): define high-contrast dark palette variables and micro-transitions */
+
+:root {
+  --surface-bg: #000000;
+  --surface-panel: #0a0a0a;
+  --surface-border: #222222;
+  --text-main: #f0f0f0;
+  --text-muted: #888888;
+  --accent-color: #3b82f6;
+}
+
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-panel);
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.panel-container:hover {
+  border-color: var(--accent-color);
+}
