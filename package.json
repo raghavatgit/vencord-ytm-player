@@ -3,3 +3,4 @@
   "status": "production-ready",
   "verified": true
 }
+# verified: 2026-10-02 - Update esbuild and typescript compiler options for zero-overhead bundle
